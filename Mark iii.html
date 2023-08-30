@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Search Bar</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <label for="searchBar">Search:</label>
+  <input type="text" id="searchBar" placeholder="Type a name...">
+  <div id="results"></div>
+
+  <script>
+    const API_KEY = 'AIzaSyAxS0nQLE3mupVSopky9zCR9T53LhLirp0';
+    const SHEET_ID = '1hV194wgiQ26w4BTY-982WMQIiw9GXStE7yBBkI9Q7C8';
+    const sheetUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/FishermanData!A:A?key=${API_KEY}`;
+
+    let data = [];
+
+    // Fetch data from Google Sheet
+    fetch(sheetUrl)
+  .then(response => {
+    if (!response.ok) {
+      return response.json().then(err => { throw err; });
+    }
+    return response.json();
+  })
+  .then(sheetData => {
+    if (sheetData && sheetData.values) {
+      data = sheetData.values.flat();
+    } else {
+      console.error("Values are undefined");
+    }
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  })
+
+      .then(sheetData => {
+        if (sheetData && sheetData.values) {
+          data = sheetData.values.flat();
+        } else {
+          console.error("Values are undefined");
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data: ', error);
+      });
+
+    // Search function
+    function search(query) {
+      return data.filter(item => item.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    function $(s) {
+        
+    }
+
+    // Listen for input changes
+    $('#searchBar').on('input', function() {
+      const query = $(this).val();
+      const results = search(query);
+
+      $('#results').empty();
+      results.forEach(result => {
+        $('#results').append(`<div>${result}</div>`);
+      });
+    });
+  </script>
+</body>
+</html>
